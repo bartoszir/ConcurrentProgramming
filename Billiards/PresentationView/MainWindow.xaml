@@ -5,28 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Billiards.Presentation.ViewModel;assembly=Billiards.PresentationViewModel"
         mc:Ignorable="d"
-        Title="Presentation layer targeting reactive behaviour" Height="auto" Width="auto">
+        Title="Presentation layer targeting reactive behaviour" Height="600" Width="600">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
-    <Border BorderThickness="4" BorderBrush="Green" Height="420" Width="400">
-        <ItemsControl ItemsSource="{Binding Balls}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Ellipse Width= "{Binding Diameter}" Height="{Binding Diameter}" Fill="Blue" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Top" Value="{Binding Top}" />
-                    <Setter Property="Canvas.Left" Value="{Binding Left}" />
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>
-    </Border>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1">
+            <Button Content="START" Command="{Binding StartCommand}" HorizontalAlignment="Left" Margin="358,32,0,0" VerticalAlignment="Top" Height="26" Width="57" FontFamily="Consolas"/>
+            <TextBlock HorizontalAlignment="Left" Margin="140,37,0,0" TextWrapping="Wrap" Text="Liczba kul:" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
+            <TextBox HorizontalAlignment="Left" Margin="240,32,0,0" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding NumberOfBalls, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="40" Height="26" FontSize="20" FontFamily="Consolas"/>
+        </Grid>
+
+        <Border Grid.Row="1" BorderThickness="10" BorderBrush="#432818" Background="#446755" Height="420"  Width="400" Margin="8" CornerRadius="10">
+            <ItemsControl ItemsSource="{Binding Balls}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width= "{Binding Diameter}" Height="{Binding Diameter}" Fill="#F0EAD6" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                        <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
+        </Border>
+        
+    </Grid>
+
 </Window>
