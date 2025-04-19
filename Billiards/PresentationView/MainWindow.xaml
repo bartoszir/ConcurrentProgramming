@@ -23,7 +23,7 @@
             <TextBox HorizontalAlignment="Left" Margin="240,32,0,0" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding NumberOfBalls, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="40" Height="26" FontSize="20" FontFamily="Consolas"/>
         </Grid>
 
-        <Border Grid.Row="1" BorderThickness="10" BorderBrush="#432818" Background="#446755" Height="420"  Width="400" Margin="8" CornerRadius="10">
+        <Border Grid.Row="1" BorderThickness="10" BorderBrush="#432818" Background="#446755" Height="420"  Width="400" Margin="8" CornerRadius="0">
             <ItemsControl ItemsSource="{Binding Balls}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -69,10 +69,66 @@ namespace Billiards.Data
         private Random RandomGenerator = new();
         private List<Ball> BallsList = [];
 
+        // wymiary stolu 
+        // TODO: zmienic ze sztywnego ustawiania rozmiarow na dynamiczne przekazywanie (!)
+        private const double TableWidth = 380.0;
+        private const double TableHeight = 400.0;
+
+        // Rozmiar kul (œrednica i promieñ)
+        private const double BallDiameter = 20.0;
+        private const double BallRadius = BallDiameter / 2.0;
+
         private void Move(object? x)
         {
             foreach (Ball item in BallsList)
-                item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
+            {
+                // biezaca pozycja
+                var current = item.Position;
+
+                // losowy przyrost
+                double dx = (RandomGenerator.NextDouble() - 0.5) * 40;
+                double dy = (RandomGenerator.NextDouble() - 0.5) * 40;
+
+                // nowa pozycja
+                double newX = current.x + dx;
+                double newY = current.y + dy;
+
+
+                // odbicie od LEWEJ krawedzi (srodek >= BallRadius)
+                if (newX < 0)
+                {
+                    newX = BallRadius;
+                    dx = -dx;
+                }
+                // odbicie od PRAWEJ krawedzi (srodek <= TableWidth - BallRadius)
+                else if (newX > TableWidth - BallDiameter)
+                {
+                    newX = TableWidth - BallDiameter;
+                    dx = -dx;
+                }
+
+                // odbicie od GORNEJ krawedzi (srodek >= BallRadius)
+                if (newY < 0)
+                {
+                    newY = BallRadius;
+                    dy = -dy;
+                }
+                // odbicie od DOLNEJ krawedzi (srodek <= TableHeight - BallRadius)
+                else if (newY > TableHeight - BallDiameter)
+                {
+                    newY = TableHeight - BallDiameter;
+                    dy = -dy;
+                }
+
+                // Rzeczywisty wektor przesuniêcia
+                double actualDx = newX - current.x;
+                double actualDy = newY - current.y;
+
+                item.Move(new Vector(actualDx, actualDy));
+
+                //item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 14, (RandomGenerator.NextDouble() - 0.5) * 14));
+            }
+
         }
 
         #endregion private

@@ -4,6 +4,8 @@ namespace Billiards.Data
     {
         #region ctor
 
+        internal Vector Position { get; private set; }
+
         internal Ball(Vector initialPosition, Vector initialVelocity)
         {
             Position = initialPosition;
@@ -22,7 +24,6 @@ namespace Billiards.Data
 
         #region private
 
-        private Vector Position;
 
         private void RaiseNewPositionChangeNotification()
         {
