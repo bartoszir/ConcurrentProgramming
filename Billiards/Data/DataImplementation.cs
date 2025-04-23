@@ -9,7 +9,8 @@ namespace Billiards.Data
 
         public DataImplementation()
         {
-            MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+            //MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+            MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(16.67)); // 1000 ms / 60 = 16.67 || 144hz -> 6.94
         }
 
         #endregion ctor
@@ -25,10 +26,23 @@ namespace Billiards.Data
             Random random = new Random();
             for (int i = 0; i < numberOfBalls; i++)
             {
-                Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
-                Ball newBall = new(startingPosition, startingPosition);
-                upperLayerHandler(startingPosition, newBall);
-                BallsList.Add(newBall);
+                //Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
+                //Ball newBall = new(startingPosition, startingPosition);
+                //upperLayerHandler(startingPosition, newBall);
+                //BallsList.Add(newBall);
+
+                // losuje pozycje srokdka z uwzglednieniem promienia
+                double x = random.NextDouble() * (TableWidth - BallDiameter) + BallRadius;
+                double y = random.NextDouble() * (TableHeight - BallDiameter) + BallRadius;
+                Vector startPos = new(x, y);
+
+                // losuje poczatkowa predkosc 
+                double vx = (random.NextDouble() - 0.5) * InitialSpeed;
+                double vy = (random.NextDouble() - 0.5) * InitialSpeed;
+
+                Ball ball = new(startPos, new Vector(vx, vy));
+                upperLayerHandler(startPos, ball);
+                BallsList.Add(ball);
             }
         }
 
@@ -78,6 +92,9 @@ namespace Billiards.Data
         private const double BallDiameter = 20.0;
         private const double BallRadius = BallDiameter / 2.0;
 
+        // Maksymalna predkosc
+        private const double InitialSpeed = 10.0;
+
         private void Move(object? x)
         {
             foreach (Ball item in BallsList)
@@ -86,8 +103,10 @@ namespace Billiards.Data
                 var current = item.Position;
 
                 // losowy przyrost
-                double dx = (RandomGenerator.NextDouble() - 0.5) * 40;
-                double dy = (RandomGenerator.NextDouble() - 0.5) * 40;
+                //double dx = (RandomGenerator.NextDouble() - 0.5) * 10;
+                //double dy = (RandomGenerator.NextDouble() - 0.5) * 10;
+                double dx = item.Velocity.x;
+                double dy = item.Velocity.y;
 
                 // nowa pozycja
                 double newX = current.x + dx;
@@ -119,6 +138,8 @@ namespace Billiards.Data
                     newY = TableHeight - BallDiameter;
                     dy = -dy;
                 }
+
+                item.Velocity = new Vector(dx, dy);
 
                 // Rzeczywisty wektor przesuniêcia
                 double actualDx = newX - current.x;
