@@ -4,6 +4,7 @@ namespace Billiards.BusinessLogic
     {
         public Ball(Data.IBall ball)
         {
+            _ball = ball;
             ball.NewPositionNotification += RaisePositionChangeEvent;
         }
 
@@ -11,9 +12,13 @@ namespace Billiards.BusinessLogic
 
         public event EventHandler<IPosition>? NewPositionNotification;
 
+        public double Diameter => _ball.Diameter;
+
         #endregion IBall
 
         #region private
+
+        private readonly Data.IBall _ball;
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector e)
         {

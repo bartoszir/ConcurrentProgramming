@@ -47,6 +47,8 @@ namespace Billiards.Data
 	{
 		event EventHandler<IVector> NewPositionNotification;
 
-		IVector Velocity { get; set; }
+        double Diameter { get; }
+
+        IVector Velocity { get; set; }
 	}
 }

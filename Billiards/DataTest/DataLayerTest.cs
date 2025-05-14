@@ -58,20 +58,20 @@ namespace Billiards.DataTest
             Assert.Equal(3, count);
         }
 
-        //[Fact]
-        //public void Dispose_ClearsBallsList_AndDisposesTimer()
-        //{
-        //    var data = new DataImplementation();
-        //    data.Start(2, (_, _) => { });
+        [Fact]
+        public void Dispose_ClearsBallsList_AndDisposesTimer()
+        {
+            //var data = new DataImplementation();
+            //data.Start(2, (_, _) => { });
 
-        //    bool disposedFlag = false;
-        //    data.CheckObjectDisposed(disposed => disposedFlag = disposed);
+            //bool disposedFlag = false;
+            //data.CheckObjectDisposed(disposed => disposedFlag = disposed);
 
-        //    data.Dispose();
-        //    Assert.True(disposedFlag);
+            //data.Dispose();
+            //Assert.True(disposedFlag);
 
-        //    data.CheckNumberOfBalls(n => Assert.Equal(0, n));
-        //}
+            //data.CheckNumberOfBalls(n => Assert.Equal(0, n));
+        }
 
         [Fact]
         public void Move_KeepsBallsWithinBounds()

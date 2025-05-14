@@ -13,6 +13,7 @@ namespace Billiards.Presentation.Model
             TopBackingField = top;
             LeftBackingField = left;
             underneathBall.NewPositionNotification += NewPositionNotification;
+            Diameter = underneathBall.Diameter;
         }
 
         #region IBall
@@ -41,7 +42,7 @@ namespace Billiards.Presentation.Model
             }
         }
 
-        public double Diameter { get; init; } = 0;
+        public double Diameter { get; private set; }
 
         #region INotifyPropertyChanged
 

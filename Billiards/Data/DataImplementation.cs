@@ -9,7 +9,6 @@ namespace Billiards.Data
 
         public DataImplementation()
         {
-            //MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
             MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(16.67)); // 1000 ms / 60 = 16.67 || 144hz -> 6.94
         }
 
@@ -26,21 +25,20 @@ namespace Billiards.Data
             Random random = new Random();
             for (int i = 0; i < numberOfBalls; i++)
             {
-                //Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
-                //Ball newBall = new(startingPosition, startingPosition);
-                //upperLayerHandler(startingPosition, newBall);
-                //BallsList.Add(newBall);
-
                 // losuje pozycje srokdka z uwzglednieniem promienia
-                double x = random.NextDouble() * (TableWidth - BallDiameter) + BallRadius;
-                double y = random.NextDouble() * (TableHeight - BallDiameter) + BallRadius;
-                Vector startPos = new(x, y);
+                //double x = random.NextDouble() * (TableWidth - BallDiameter) + BallRadius;
+                //double y = random.NextDouble() * (TableHeight - BallDiameter) + BallRadius;
+                //Vector startPos = new(x, y);
+                Vector startPos = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
+                Vector startVel = new((random.NextDouble() - 0.5) * 10, (random.NextDouble() - 0.5) * 10);
 
-                // losuje poczatkowa predkosc 
-                double vx = (random.NextDouble() - 0.5) * InitialSpeed;
-                double vy = (random.NextDouble() - 0.5) * InitialSpeed;
+                //// losuje poczatkowa predkosc 
+                //double vx = (random.NextDouble() - 0.5) * InitialSpeed;
+                //double vy = (random.NextDouble() - 0.5) * InitialSpeed;
 
-                Ball ball = new(startPos, new Vector(vx, vy));
+                double randomMass = random.NextDouble() * 0.5 + 1.0; // masa z zakresu 1.0 - 1.5
+
+                Ball ball = new(startPos, startVel, randomMass);
                 upperLayerHandler(startPos, ball);
                 BallsList.Add(ball);
             }
@@ -82,72 +80,28 @@ namespace Billiards.Data
         private readonly Timer MoveTimer;
         private Random RandomGenerator = new();
         private List<Ball> BallsList = [];
+        private readonly object _lock = new();
 
         // wymiary stolu 
         // TODO: zmienic ze sztywnego ustawiania rozmiarow na dynamiczne przekazywanie (!)
-        private const double TableWidth = 380.0;
-        private const double TableHeight = 400.0;
+        //private const double TableWidth = 380.0;
+        //private const double TableHeight = 400.0;
 
         // Rozmiar kul (œrednica i promieñ)
-        private const double BallDiameter = 20.0;
-        private const double BallRadius = BallDiameter / 2.0;
+        //private const double BallDiameter = 20.0;
+        //private const double BallRadius = BallDiameter / 2.0;
 
         // Maksymalna predkosc
         private const double InitialSpeed = 10.0;
 
         private void Move(object? x)
         {
-            foreach (Ball item in BallsList)
+            lock (_lock)
             {
-                // biezaca pozycja
-                var current = item.Position;
-
-                // losowy przyrost
-                //double dx = (RandomGenerator.NextDouble() - 0.5) * 10;
-                //double dy = (RandomGenerator.NextDouble() - 0.5) * 10;
-                double dx = item.Velocity.x;
-                double dy = item.Velocity.y;
-
-                // nowa pozycja
-                double newX = current.x + dx;
-                double newY = current.y + dy;
-
-
-                // odbicie od LEWEJ krawedzi (srodek >= BallRadius)
-                if (newX < 0)
+                foreach (Ball item in BallsList)
                 {
-                    newX = BallRadius;
-                    dx = -dx;
+                    item.Move(new Vector(item.Velocity.x, item.Velocity.y));
                 }
-                // odbicie od PRAWEJ krawedzi (srodek <= TableWidth - BallRadius)
-                else if (newX > TableWidth - BallDiameter)
-                {
-                    newX = TableWidth - BallDiameter;
-                    dx = -dx;
-                }
-
-                // odbicie od GORNEJ krawedzi (srodek >= BallRadius)
-                if (newY < 0)
-                {
-                    newY = BallRadius;
-                    dy = -dy;
-                }
-                // odbicie od DOLNEJ krawedzi (srodek <= TableHeight - BallRadius)
-                else if (newY > TableHeight - BallDiameter)
-                {
-                    newY = TableHeight - BallDiameter;
-                    dy = -dy;
-                }
-
-                item.Velocity = new Vector(dx, dy);
-
-                // Rzeczywisty wektor przesuniêcia
-                double actualDx = newX - current.x;
-                double actualDy = newY - current.y;
-
-                item.Move(new Vector(actualDx, actualDy));
-
-                //item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 14, (RandomGenerator.NextDouble() - 0.5) * 14));
             }
 
         }
