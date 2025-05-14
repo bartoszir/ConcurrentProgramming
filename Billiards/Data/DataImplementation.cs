@@ -9,7 +9,7 @@ namespace Billiards.Data
 
         public DataImplementation()
         {
-            MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(16.67)); // 1000 ms / 60 = 16.67 || 144hz -> 6.94
+            //MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(16.67)); // 1000 ms / 60 = 16.67 || 144hz -> 6.94
         }
 
         #endregion ctor
@@ -23,37 +23,38 @@ namespace Billiards.Data
             if (upperLayerHandler == null)
                 throw new ArgumentNullException(nameof(upperLayerHandler));
 
-            Random random = new Random();
+            //Random random = new Random();
 
             lock (_lock)
             {
                 BallsList.Clear();
             }
 
+            _cts = new CancellationTokenSource();
+
             for (int i = 0; i < numberOfBalls; i++)
             {
-                // losuje pozycje srokdka z uwzglednieniem promienia
-                //double x = random.NextDouble() * (TableWidth - BallDiameter) + BallRadius;
-                //double y = random.NextDouble() * (TableHeight - BallDiameter) + BallRadius;
-                //Vector startPos = new(x, y);
-                Vector startPos = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
-                Vector startVel = new((random.NextDouble() - 0.5) * 10, (random.NextDouble() - 0.5) * 10);
-
-                //// losuje poczatkowa predkosc 
-                //double vx = (random.NextDouble() - 0.5) * InitialSpeed;
-                //double vy = (random.NextDouble() - 0.5) * InitialSpeed;
-
-                //double randomMass = random.NextDouble() * 0.5 + 1.0; // masa z zakresu 1.0 - 1.5
-
-                double randomMass = 2.0;
-
-                Ball ball = new(startPos, startVel, randomMass);
-                upperLayerHandler(startPos, ball);
+                Ball newBall = CreateBall();
+                upperLayerHandler(newBall.Position, newBall);
 
                 lock (_lock)
                 {
-                    BallsList.Add(ball);
+                    BallsList.Add(newBall);
                 }
+
+                BallTasks.Add(Task.Run(async () =>
+                {
+                    while (!_cts.Token.IsCancellationRequested)
+                    {
+                        lock (_lock)
+                        {
+                            newBall.Move(new Vector(newBall.Velocity.x, newBall.Velocity.y));
+                            HandleCollisionsForBall(newBall);
+                        }
+
+                        await Task.Delay(16, _cts.Token);
+                    }
+                }, _cts.Token));
             }
         }
 
@@ -67,7 +68,10 @@ namespace Billiards.Data
             {
                 if (disposing)
                 {
-                    MoveTimer.Dispose();
+                    //MoveTimer.Dispose();
+                    _cts?.Cancel();
+                    _cts?.Dispose();
+                    BallTasks.Clear();
                     BallsList.Clear();
                 }
                 Disposed = true;
@@ -90,36 +94,37 @@ namespace Billiards.Data
         //private bool disposedValue;
         private bool Disposed = false;
 
-        private readonly Timer MoveTimer;
+        //private readonly Timer MoveTimer;
         private Random RandomGenerator = new();
         private List<Ball> BallsList = [];
         private readonly object _lock = new();
+        private readonly List<Task> BallTasks = new();
+        private CancellationTokenSource _cts = new();
 
         // Maksymalna predkosc
         private const double InitialSpeed = 10.0;
 
-        private void Move(object? x)
+        private Ball CreateBall()
         {
-            lock (_lock)
-            {
-                int count = BallsList.Count;
-                for (int i = 0; i < count - 1; i++)
-                {
-                    for (int j = i + 1; j < count; j++)
-                    {
-                        HandleCollision(BallsList[i], BallsList[j]);
-                    }
-                }
-
-                foreach (Ball item in BallsList)
-                {
-                    item.Move(new Vector(item.Velocity.x, item.Velocity.y));
-                }
-            }
-
+            Vector pos = new(RandomGenerator.Next(100, 300), RandomGenerator.Next(100, 300));
+            Vector vel = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
+            double mass = 2.0;
+            return new Ball(pos, vel, mass);
         }
 
-        protected void HandleCollision(Ball a, Ball b)
+        private void HandleCollisionsForBall(Ball current)
+        {
+            foreach (Ball other in BallsList)
+            {
+                if (!ReferenceEquals(current, other))
+                {
+                    HandleCollision(current, other);
+                }
+            }
+        }
+        
+
+        private void HandleCollision(Ball a, Ball b)
         {
             Vector posA = a.Position;
             Vector posB = b.Position;
