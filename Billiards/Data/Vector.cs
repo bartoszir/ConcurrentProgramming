@@ -26,5 +26,21 @@ namespace Billiards.Data
             x = XComponent;
             y = YComponent;
         }
+
+        // zmienne pomocnicze
+        public double Length() => Math.Sqrt(x * x + y * y);
+        public static double Dot(Vector a, Vector b) => a.x * b.x + a.y * b.y;
+        public static Vector operator *(double scalar, Vector v) => new(v.x * scalar, v.y * scalar);
+        public static Vector operator *(Vector v, double scalar) => scalar * v;
+        public static Vector operator +(Vector a, Vector b) => new(a.x + b.x, a.y + b.y);
+        public static Vector operator -(Vector a, Vector b) => new(a.x - b.x, a.y - b.y);
+        public static Vector operator /(Vector v, double scalar)
+        {
+            if (scalar == 0)
+            {
+                throw new DivideByZeroException("Can't divide by zero!");
+            }
+            return new(v.x / scalar, v.y / scalar);
+        }
     }
 }

@@ -11,8 +11,10 @@ namespace Billiards.Data
             Position = initialPosition;
             Velocity = initialVelocity;
             Mass = mass;
-            Diameter = CalculateDiameter(mass);
+            //Diameter = CalculateDiameter(mass);
+            Diameter = 25.0;
         }
+
 
         #endregion ctor
 
@@ -84,15 +86,15 @@ namespace Billiards.Data
             RaiseNewPositionChangeNotification();
         }
 
-        private static double CalculateDiameter(double mass)
-        {
-            // wykorzystuje tu pierwiastkowe skalowanie - srednica rosnie proporcjonalnie do pierwiastka kwadratowego masy
-            //const double scaleFactor = 15.0;
-            //return scaleFactor * Math.Sqrt(mass);
-            const double baseDiameter = 20.0;
-            const double scalingFactor = 20.0;
-            return baseDiameter + (mass - 1.0) * scalingFactor;
-        }
+        //private static double CalculateDiameter(double mass)
+        //{
+        //    // wykorzystuje tu pierwiastkowe skalowanie - srednica rosnie proporcjonalnie do pierwiastka kwadratowego masy
+        //    //const double scaleFactor = 15.0;
+        //    //return scaleFactor * Math.Sqrt(mass);
+        //    const double baseDiameter = 20.0;
+        //    const double scalingFactor = 20.0;
+        //    return baseDiameter + (mass - 1.0) * scalingFactor;
+        //}
 
         #endregion private
     }

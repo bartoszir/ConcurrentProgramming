@@ -22,7 +22,14 @@ namespace Billiards.Data
                 throw new ObjectDisposedException(nameof(DataImplementation));
             if (upperLayerHandler == null)
                 throw new ArgumentNullException(nameof(upperLayerHandler));
+
             Random random = new Random();
+
+            lock (_lock)
+            {
+                BallsList.Clear();
+            }
+
             for (int i = 0; i < numberOfBalls; i++)
             {
                 // losuje pozycje srokdka z uwzglednieniem promienia
@@ -36,11 +43,17 @@ namespace Billiards.Data
                 //double vx = (random.NextDouble() - 0.5) * InitialSpeed;
                 //double vy = (random.NextDouble() - 0.5) * InitialSpeed;
 
-                double randomMass = random.NextDouble() * 0.5 + 1.0; // masa z zakresu 1.0 - 1.5
+                //double randomMass = random.NextDouble() * 0.5 + 1.0; // masa z zakresu 1.0 - 1.5
+
+                double randomMass = 2.0;
 
                 Ball ball = new(startPos, startVel, randomMass);
                 upperLayerHandler(startPos, ball);
-                BallsList.Add(ball);
+
+                lock (_lock)
+                {
+                    BallsList.Add(ball);
+                }
             }
         }
 
@@ -82,15 +95,6 @@ namespace Billiards.Data
         private List<Ball> BallsList = [];
         private readonly object _lock = new();
 
-        // wymiary stolu 
-        // TODO: zmienic ze sztywnego ustawiania rozmiarow na dynamiczne przekazywanie (!)
-        //private const double TableWidth = 380.0;
-        //private const double TableHeight = 400.0;
-
-        // Rozmiar kul (œrednica i promieñ)
-        //private const double BallDiameter = 20.0;
-        //private const double BallRadius = BallDiameter / 2.0;
-
         // Maksymalna predkosc
         private const double InitialSpeed = 10.0;
 
@@ -98,12 +102,53 @@ namespace Billiards.Data
         {
             lock (_lock)
             {
+                int count = BallsList.Count;
+                for (int i = 0; i < count - 1; i++)
+                {
+                    for (int j = i + 1; j < count; j++)
+                    {
+                        HandleCollision(BallsList[i], BallsList[j]);
+                    }
+                }
+
                 foreach (Ball item in BallsList)
                 {
                     item.Move(new Vector(item.Velocity.x, item.Velocity.y));
                 }
             }
 
+        }
+
+        private void HandleCollision(Ball a, Ball b)
+        {
+            Vector posA = a.Position;
+            Vector posB = b.Position;
+            Vector velA = (Vector)a.Velocity;
+            Vector velB = (Vector)b.Velocity;
+
+            double massA = a.Mass;
+            double massB = b.Mass;
+
+            Vector offset = posA - posB;
+            double actualDistance = offset.Length();
+            double contactThreshold = (a.Diameter + b.Diameter) * 0.5;
+
+            if (actualDistance >= contactThreshold || actualDistance == 0)
+                return;
+
+            Vector normal = offset / actualDistance;
+            Vector relativeVelocity = velA - velB;
+
+            double approachSpeed = Vector.Dot(relativeVelocity, normal);
+
+            if (approachSpeed >= 0)
+                return;
+
+            double impulseMagnitude = (2.0 * approachSpeed) / (massA + massB);
+            Vector impulse = impulseMagnitude * normal;
+
+            a.Velocity = velA - impulse * massB;
+            b.Velocity = velB + impulse * massA;
         }
 
         #endregion private
