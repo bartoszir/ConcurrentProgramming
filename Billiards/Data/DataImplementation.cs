@@ -119,7 +119,7 @@ namespace Billiards.Data
 
         }
 
-        private void HandleCollision(Ball a, Ball b)
+        protected void HandleCollision(Ball a, Ball b)
         {
             Vector posA = a.Position;
             Vector posB = b.Position;

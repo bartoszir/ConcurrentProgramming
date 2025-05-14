@@ -59,8 +59,8 @@ namespace Billiards.Presentation.Model
         {
             ModelBall newBall = new ModelBall(position.x, position.y, ball);
             BallChanged.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
-        }
 
+        }
         #endregion private
 
         #region TestingInfrastructure

@@ -42,7 +42,7 @@ namespace Billiards.BusinessLogicTest
         {
             public DataVector Velocity { get; set; } = new VectorFixture(0, 0);
             public event EventHandler<DataVector>? NewPositionNotification;
-
+            public double Diameter => 20.0;
             public void RaiseEvent(DataVector v)
             {
                 NewPositionNotification?.Invoke(this, v);
@@ -82,6 +82,7 @@ namespace Billiards.BusinessLogicTest
         {
             public DataVector Velocity { get; set; } = new VectorFixture(0, 0);
             public event EventHandler<DataVector>? NewPositionNotification;
+            public double Diameter => 20.0;
         }
 
         private class VectorFixture : DataVector
