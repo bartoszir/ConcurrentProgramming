@@ -108,7 +108,8 @@ namespace Billiards.Data
         {
             Vector pos = new(RandomGenerator.Next(100, 300), RandomGenerator.Next(100, 300));
             Vector vel = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
-            double mass = 2.0;
+            //double mass = 2.0;
+            double mass = RandomGenerator.NextDouble() * 0.5 + 1.0;
             return new Ball(pos, vel, mass);
         }
 
