@@ -39,6 +39,36 @@ namespace Billiards.Presentation.ViewModel
             }
         }
 
+        public double TableWidth
+        {
+            get => _tableWidth;
+            set
+            {
+                if (_tableWidth != value)
+                {
+                    _tableWidth = value;
+                    RaisePropertyChanged();
+                    _startCommand.RaiseCanExecuteChanged();
+                    ModelLayer.SetTableSize(_tableWidth, _tableHeight);
+                }
+            }
+        }
+
+        public double TableHeight
+        {
+            get => _tableHeight;
+            set
+            {
+                if (_tableHeight != value)
+                {
+                    _tableHeight = value;
+                    RaisePropertyChanged();
+                    _startCommand.RaiseCanExecuteChanged();
+                    ModelLayer.SetTableSize(_tableWidth, _tableHeight);
+                }
+            }
+        }
+
         public ICommand StartCommand => _startCommand;
 
         public void Start(int numberOfBalls)
@@ -46,12 +76,13 @@ namespace Billiards.Presentation.ViewModel
             if (Disposed)
                 throw new ObjectDisposedException(nameof(MainWindowViewModel));
             Balls.Clear();
-            ModelLayer.Start(numberOfBalls);
+            ModelLayer.Start(numberOfBalls, TableWidth, TableHeight);
             Observer?.Dispose();
             Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
         }
 
         public ObservableCollection<ModelIBall> Balls { get; } = new ObservableCollection<ModelIBall>();
+
 
         #endregion public API
 
@@ -93,6 +124,9 @@ namespace Billiards.Presentation.ViewModel
         private int _numberOfBalls;
         private bool _isEnabled = true;
         private readonly RelayCommand _startCommand;
+        // rozmiary stolu
+        private double _tableWidth = 380.0;
+        private double _tableHeight = 400.0;
 
         #endregion private
     }

@@ -27,22 +27,60 @@ namespace Billiards.BusinessLogic
 			Disposed = true;
 		}
 
+		public override void Start(int numberOfBalls, double tableWidth, double tableHeight)
+		{
+			TableWidth = tableWidth;
+			TableHeight = tableHeight;
+			//layerBellow.SetTableSize(tableWidth, tableHeight);
+			layerBellow.TableWidth = tableWidth;
+			layerBellow.TableHeight = tableHeight;
+
+			Start(numberOfBalls, _upperLayerHandler!);
+		}
+
 		public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
 		{
 			if (Disposed)
 				throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
 			if (upperLayerHandler == null)
 				throw new ArgumentNullException(nameof(upperLayerHandler));
+			//layerBellow.SetTableSize(tableWidth, tableHeight);
+			_upperLayerHandler = upperLayerHandler;
 			layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall)));
 		}
 
-		#endregion BusinessLogicAbstractAPI
+        public override void Start(int numberOfBalls, double tableWidth, double tableHeight, Action<IPosition, IBall> upperLayerHandler)
+        {
+			TableWidth = tableWidth;
+			TableHeight = tableHeight;
 
-		#region private
+			//layerBellow.TableWidth = tableWidth;
+			//layerBellow.TableHeight = tableHeight;
+			SetTableSize(tableWidth, tableHeight);
 
-		private bool Disposed = false;
+			_upperLayerHandler = upperLayerHandler;
+
+			layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall)));
+        }
+
+
+        public override void SetTableSize(double width, double height)
+		{
+            layerBellow.SetTableSize(width, height);
+        }
+
+		public override double TableWidth { get; set; }
+		public override double TableHeight { get; set; }
+
+        #endregion BusinessLogicAbstractAPI
+
+        #region private
+
+        private bool Disposed = false;
 
 		private readonly UnderneathLayerAPI layerBellow;
+
+		private Action<IPosition, IBall>? _upperLayerHandler;
 
 		#endregion private
 

@@ -10,24 +10,56 @@
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
-    <Grid>
+    <Grid Name="MainGrid" SizeChanged="MainGrid_SizeChanged">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1">
-            <Button Content="START" Command="{Binding StartCommand}" HorizontalAlignment="Left" Margin="358,32,0,0" VerticalAlignment="Top" Height="26" Width="57" FontFamily="Consolas"/>
-            <TextBlock HorizontalAlignment="Left" Margin="140,37,0,0" TextWrapping="Wrap" Text="Liczba kul:" VerticalAlignment="Top" FontSize="14" FontFamily="Consolas" FontWeight="Bold"/>
-            <TextBox HorizontalAlignment="Left" Margin="240,32,0,0" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding NumberOfBalls, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="40" Height="26" FontSize="20" FontFamily="Consolas"/>
-        </Grid>
+        <!-- WIERSZ 0 – przyciski -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" >
+            <TextBlock Text="Liczba kul:"
+               VerticalAlignment="Center"
+               FontSize="14"
+               FontFamily="Consolas"
+               FontWeight="Bold" 
+               Margin="0,0,10,0"/>
 
-        <Border Grid.Row="1" BorderThickness="10" BorderBrush="#432818" Background="#446755" Height="420"  Width="400" Margin="8" CornerRadius="0">
+            <TextBox Text="{Binding NumberOfBalls, UpdateSourceTrigger=PropertyChanged}"
+                TextAlignment="Center"
+                Width="50"
+                Height="26"
+                FontSize="20"
+                FontFamily="Consolas"
+                VerticalAlignment="Center" 
+                Margin="0,0,30,0" />
+
+            <Button Content="START"
+                Command="{Binding StartCommand}"
+                Width="80"
+                Height="30"
+                FontFamily="Consolas"
+                VerticalAlignment="Center" />
+        </StackPanel>
+
+        <!-- WIERSZ 1 – stół z kulami -->
+        <Border x:Name="TableBorder" 
+                Grid.Row="1" 
+                BorderThickness="10" 
+                BorderBrush="#432818" 
+                Background="#446755" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" 
+                Margin="20" 
+                CornerRadius="0">
+            
             <ItemsControl ItemsSource="{Binding Balls}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas />
+                        <Canvas x:Name="TableCanvas"
+                                Width="{Binding TableWidth}"
+                                Height="{Binding TableHeight}" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

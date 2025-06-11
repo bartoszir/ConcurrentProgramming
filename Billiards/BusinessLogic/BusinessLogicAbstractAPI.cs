@@ -15,7 +15,14 @@ namespace Billiards.BusinessLogic
 
         public static readonly Dimensions GetDimensions = new(10.0, 10.0, 10.0);
 
+        public abstract void Start(int numberOfBalls, double tableWidth, double tableHeight, Action<IPosition, IBall> upperLayerHandler);
+        public abstract void Start(int numberOfBalls, double tableWidth, double tableHeight);
         public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler);
+
+        public abstract void SetTableSize(double width, double height);
+
+        public abstract double TableWidth { get; set; }
+        public abstract double TableHeight { get; set; }
 
         #region IDisposable
 

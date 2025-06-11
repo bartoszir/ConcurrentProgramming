@@ -15,6 +15,11 @@ namespace Billiards.Data
 
 		public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
 
+		public abstract void SetTableSize(double width, double height);
+
+		public abstract double TableWidth { get; set; }
+		public abstract double TableHeight { get; set; }
+
 		#endregion public API
 
 		#region IDisposable

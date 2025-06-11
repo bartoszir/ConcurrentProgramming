@@ -6,13 +6,15 @@ namespace Billiards.Data
 
         internal Vector Position { get; private set; }
 
-        internal Ball(Vector initialPosition, Vector initialVelocity, double mass)
+        internal Ball(Vector initialPosition, Vector initialVelocity, double mass, double tableWidth, double tableHeight)
         {
             Position = initialPosition;
             Velocity = initialVelocity;
             Mass = mass;
             Diameter = CalculateDiameter(mass);
             //Diameter = 25.0;
+            TableWidth = tableWidth;
+            TableHeight = tableHeight;
         }
 
 
@@ -28,15 +30,15 @@ namespace Billiards.Data
 
         public double Diameter { get; private set; }
 
+        // wymiary stolu
+        public double TableWidth { get; internal set; }
+
+        public double TableHeight { get; internal set; }
+
         #endregion IBall
 
         #region private
 
-        // wymiary stolu
-        public const double TableWidth = 380.0;
-        public const double TableHeight = 400.0;
-
-        
 
         private void RaiseNewPositionChangeNotification()
         {
@@ -84,6 +86,12 @@ namespace Billiards.Data
             Position = new Vector(newX, newY);
 
             RaiseNewPositionChangeNotification();
+        }
+
+        internal void UpdateTableSize(double width, double height)
+        {
+            TableWidth = width;
+            TableHeight = height;
         }
 
         private static double CalculateDiameter(double mass)

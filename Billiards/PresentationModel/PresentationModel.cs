@@ -36,9 +36,14 @@ namespace Billiards.Presentation.Model
             return eventObservable.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
         }
 
-        public override void Start(int numberOfBalls)
+        public override void Start(int numberOfBalls, double tableWidth, double tableHeight)
         {
-            layerBellow.Start(numberOfBalls, StartHandler);
+            layerBellow.Start(numberOfBalls, tableWidth, tableHeight, StartHandler);
+        }
+
+        public override void SetTableSize(double width, double height)
+        {
+            layerBellow.SetTableSize(width, height);
         }
 
         #endregion ModelAbstractApi
@@ -53,7 +58,7 @@ namespace Billiards.Presentation.Model
 
         private bool Disposed = false;
         private readonly IObservable<EventPattern<BallChaneEventArgs>> eventObservable = null;
-        private readonly UnderneathLayerAPI layerBellow = null;
+        private readonly UnderneathLayerAPI layerBellow;
 
         private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
         {

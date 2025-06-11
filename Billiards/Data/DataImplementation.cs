@@ -58,6 +58,21 @@ namespace Billiards.Data
             }
         }
 
+        public override void SetTableSize(double width, double height)
+        {
+            TableWidth = width;
+            TableHeight = height;
+
+            // aktualizujemy istniejace juz kule
+            lock (_lock)
+            {
+                foreach (Ball ball in BallsList)
+                {
+                    ball.UpdateTableSize(width, height);
+                }
+            }
+        }
+
         #endregion DataAbstractAPI
 
         #region IDisposable
@@ -104,13 +119,18 @@ namespace Billiards.Data
         // Maksymalna predkosc
         private const double InitialSpeed = 10.0;
 
+        // wymiary stolu (dla dynamicznego przekazywania)
+        public override double TableWidth { get; set; } = 380.0;
+        public override double TableHeight { get; set; } = 400.0;
+
         private Ball CreateBall()
         {
             Vector pos = new(RandomGenerator.Next(100, 300), RandomGenerator.Next(100, 300));
             Vector vel = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
             //double mass = 2.0;
             double mass = RandomGenerator.NextDouble() * 0.5 + 1.0;
-            return new Ball(pos, vel, mass);
+            Debug.WriteLine($"U¿ywany rozmiar sto³u: width={TableWidth}, height={TableHeight}");
+            return new Ball(pos, vel, mass, TableWidth, TableHeight);
         }
 
         private void HandleCollisionsForBall(Ball current)

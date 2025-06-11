@@ -17,6 +17,25 @@ namespace Billiards.PresentationView
             //double screenWidth = SystemParameters.PrimaryScreenWidth;
             //double screenHeight = SystemParameters.PrimaryScreenHeight;
             //viewModel.Start(random.Next(5, 10));
+
+            this.SizeChanged += (s, e) =>
+            {
+                if (DataContext is MainWindowViewModel vm)
+                {
+                    // odejmujemy marginesy i obramowanie (20px)
+                    double borderThickness = 20.0;
+
+                    // pobieramy dostępne wymiary Bordera
+                    double newWidth = TableBorder.ActualWidth - borderThickness;
+                    double newHeight = TableBorder.ActualHeight - borderThickness;
+
+                    if (newWidth > 0 && newHeight > 0)
+                    {
+                        vm.TableWidth = newWidth;
+                        vm.TableHeight = newHeight;
+                    }
+                }
+            };
         }
 
         /// <summary>
@@ -29,6 +48,17 @@ namespace Billiards.PresentationView
                 viewModel.Dispose();
             base.OnClosed(e);
         }
+
+        private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.TableWidth = MainGrid.ActualWidth - 100.0;
+                vm.TableHeight = MainGrid.ActualHeight - 120.0;
+            }
+        }
+
+
 
     }
 }
