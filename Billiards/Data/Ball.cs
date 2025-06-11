@@ -45,44 +45,39 @@ namespace Billiards.Data
             NewPositionNotification?.Invoke(this, Position);
         }
 
-        internal void Move(Vector delta)
+        internal void MoveWithDelta(double deltaTime)
         {
-            double dx = delta.x;
-            double dy = delta.y;
+            double dx = Velocity.x * deltaTime;
+            double dy = Velocity.y * deltaTime;
 
-            // nowa pozycja
             double newX = Position.x + dx;
             double newY = Position.y + dy;
 
             double radius = Diameter / 2.0;
 
-            // odbicie od LEWEJ krawedzi (srodek >= BallRadius)
             if (newX < 0)
             {
                 newX = radius;
                 dx = -dx;
             }
-            // odbicie od PRAWEJ krawedzi (srodek <= TableWidth - BallRadius)
             else if (newX > TableWidth - Diameter)
             {
                 newX = TableWidth - Diameter;
                 dx = -dx;
             }
 
-            // odbicie od GORNEJ krawedzi (srodek >= BallRadius)
             if (newY < 0)
             {
                 newY = radius;
                 dy = -dy;
             }
-            // odbicie od DOLNEJ krawedzi (srodek <= TableHeight - BallRadius)
             else if (newY > TableHeight - Diameter)
             {
                 newY = TableHeight - Diameter;
                 dy = -dy;
             }
 
-            Velocity = new Vector(dx, dy);
+            Velocity = new Vector(dx / deltaTime, dy / deltaTime);
             Position = new Vector(newX, newY);
 
             RaiseNewPositionChangeNotification();

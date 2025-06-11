@@ -42,17 +42,25 @@ namespace Billiards.Data
                     BallsList.Add(newBall);
                 }
 
+                lastUpdateTimes[newBall] = DateTime.UtcNow;
+
                 BallTasks.Add(Task.Run(async () =>
                 {
                     while (!_cts.Token.IsCancellationRequested)
                     {
+                        DateTime now = DateTime.UtcNow;
+                        double deltaTime;
+
                         lock (_lock)
                         {
-                            newBall.Move(new Vector(newBall.Velocity.x, newBall.Velocity.y));
+                            deltaTime = (now - lastUpdateTimes[newBall]).TotalSeconds;
+                            lastUpdateTimes[newBall] = now;
+
+                            newBall.MoveWithDelta(deltaTime);
                             HandleCollisionsForBall(newBall);
                         }
 
-                        await Task.Delay(16, _cts.Token);
+                        await Task.Delay(1, _cts.Token); // szybciej reaguje, ale deltaTime decyduje o ruchu
                     }
                 }, _cts.Token));
             }
@@ -123,13 +131,21 @@ namespace Billiards.Data
         public override double TableWidth { get; set; } = 380.0;
         public override double TableHeight { get; set; } = 400.0;
 
+        private readonly Dictionary<Ball, DateTime> lastUpdateTimes = new();
+
         private Ball CreateBall()
         {
             Vector pos = new(RandomGenerator.Next(100, 300), RandomGenerator.Next(100, 300));
-            Vector vel = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
+            //Vector vel = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
+            double baseSpeed = 200.0; // pikseli/s 
+            double angle = RandomGenerator.NextDouble() * 2 * Math.PI;
+            double vx = Math.Cos(angle) * baseSpeed;
+            double vy = Math.Sin(angle) * baseSpeed;
+            Vector vel = new(vx, vy);
+            
             //double mass = 2.0;
             double mass = RandomGenerator.NextDouble() * 0.5 + 1.0;
-            Debug.WriteLine($"U¿ywany rozmiar sto³u: width={TableWidth}, height={TableHeight}");
+            //Debug.WriteLine($"U¿ywany rozmiar sto³u: width={TableWidth}, height={TableHeight}");
             return new Ball(pos, vel, mass, TableWidth, TableHeight);
         }
 
