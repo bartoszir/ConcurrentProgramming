@@ -75,6 +75,15 @@ namespace Billiards.BusinessLogicTest
                 }
             }
 
+            public override void SetTableSize(double width, double height)
+            {
+                TableWidth = width;
+                TableHeight = height;
+            }
+
+            public override double TableWidth { get; set; } = 380.0;
+            public override double TableHeight { get; set; } = 400.0;
+
             public bool Disposed { get; private set; }
         }
 

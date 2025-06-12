@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Linq;
+using Billiards.BusinessLogic;
 using Billiards.Presentation.Model;
 using ModelIBall = Billiards.Presentation.Model.IBall;
 
@@ -64,7 +65,7 @@ namespace Billiards.Presentation.ViewModel.Test
                 Disposed++;
             }
 
-            public override void Start(int numberOfBalls)
+            public override void Start(int numberOfBalls, double tableWidth, double tableHeight)
             {
                 Started = numberOfBalls;
             }
@@ -73,6 +74,11 @@ namespace Billiards.Presentation.ViewModel.Test
             {
                 Subscribed++;
                 return new NullDisposable();
+            }
+
+            public override void SetTableSize(double width, double height)
+            {
+                // Pusta implementacja
             }
 
             #endregion ModelAbstractApi
@@ -112,7 +118,7 @@ namespace Billiards.Presentation.ViewModel.Test
                 return eventObservable?.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
             }
 
-            public override void Start(int numberOfBalls)
+            public override void Start(int numberOfBalls, double tableWidth, double tableHeight)
             {
                 for (int i = 0; i < numberOfBalls; i++)
                 {
@@ -124,6 +130,11 @@ namespace Billiards.Presentation.ViewModel.Test
             public override void Dispose()
             {
                 Disposed = true;
+            }
+
+            public override void SetTableSize(double width, double height)
+            {
+                // Pusta implementacja
             }
 
             #endregion ModelAbstractApi
