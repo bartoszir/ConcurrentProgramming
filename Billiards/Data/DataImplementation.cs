@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Billiards.Data
 {
@@ -96,6 +97,7 @@ namespace Billiards.Data
                     _cts?.Dispose();
                     BallTasks.Clear();
                     BallsList.Clear();
+                    _logger.Stop();
                 }
                 Disposed = true;
             }
@@ -133,6 +135,9 @@ namespace Billiards.Data
 
         private readonly Dictionary<Ball, DateTime> lastUpdateTimes = new();
 
+        private readonly DiagnosticLogger _logger = new DiagnosticLogger();
+
+
         private Ball CreateBall()
         {
             Vector pos = new(RandomGenerator.Next(100, 300), RandomGenerator.Next(100, 300));
@@ -146,7 +151,9 @@ namespace Billiards.Data
             //double mass = 2.0;
             double mass = RandomGenerator.NextDouble() * 0.5 + 1.0;
             //Debug.WriteLine($"U¿ywany rozmiar sto³u: width={TableWidth}, height={TableHeight}");
-            return new Ball(pos, vel, mass, TableWidth, TableHeight);
+            Ball ball = new Ball(pos, vel, mass, TableWidth, TableHeight);
+            ball.Logger = this._logger; 
+            return ball;
         }
 
         private void HandleCollisionsForBall(Ball current)
@@ -155,6 +162,14 @@ namespace Billiards.Data
             {
                 if (!ReferenceEquals(current, other))
                 {
+                    _logger.Log(new DiagnosticEvent
+                    {
+                        Timestamp = DateTime.Now,
+                        EventType = "Collision",
+                        BallId1 = current.Id,
+                        BallId2 = other.Id,
+                        Position = $"x={Math.Round(current.Position.x, 2)},y={Math.Round(current.Position.y, 2)}"
+                    });
                     HandleCollision(current, other);
                 }
             }
