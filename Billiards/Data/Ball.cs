@@ -76,28 +76,30 @@ namespace Billiards.Data
 
             if (newX < 0)
             {
-                Logger?.Log(new DiagnosticEvent
-                {
-                    Timestamp = DateTime.Now,
-                    EventType = "WallHit (Left)",
-                    BallId1 = this.Id,
-                    BallId2 = null,
-                    Position = $"x={Math.Round(newX, 2)} ,y={Math.Round(newY, 2)}"
-                });
+                //Logger?.Log(new DiagnosticEvent
+                //{
+                //    Timestamp = DateTime.Now,
+                //    EventType = "WallHit (Left)",
+                //    BallId1 = this.Id,
+                //    BallId2 = null,
+                //    Position = $"x={Math.Round(newX, 2)} ,y={Math.Round(newY, 2)}"
+                //});
+                Logger?.LogCollisionWithWall(this.Id, "Left", newX, newY);
 
                 newX = radius;
                 dx = -dx;
             }
             else if (newX > TableWidth - Diameter)
             {
-                Logger?.Log(new DiagnosticEvent
-                {
-                    Timestamp = DateTime.Now,
-                    EventType = "WallHit (Right)",
-                    BallId1 = this.Id,
-                    BallId2 = null,
-                    Position = $"x={Math.Round(newX, 2)},y={Math.Round(newY, 2)}"
-                });
+                //Logger?.Log(new DiagnosticEvent
+                //{
+                //    Timestamp = DateTime.Now,
+                //    EventType = "WallHit (Right)",
+                //    BallId1 = this.Id,
+                //    BallId2 = null,
+                //    Position = $"x={Math.Round(newX, 2)},y={Math.Round(newY, 2)}"
+                //});
+                Logger?.LogCollisionWithWall(this.Id, "Right", newX, newY);
 
                 newX = TableWidth - Diameter;
                 dx = -dx;
@@ -105,28 +107,30 @@ namespace Billiards.Data
 
             if (newY < 0)
             {
-                Logger?.Log(new DiagnosticEvent
-                {
-                    Timestamp = DateTime.Now,
-                    EventType = "WallHit (Top)",
-                    BallId1 = this.Id,
-                    BallId2 = null,
-                    Position = $"x={Math.Round(newX, 2)},y={Math.Round(newY, 2)}"
-                });
+                //Logger?.Log(new DiagnosticEvent
+                //{
+                //    Timestamp = DateTime.Now,
+                //    EventType = "WallHit (Top)",
+                //    BallId1 = this.Id,
+                //    BallId2 = null,
+                //    Position = $"x={Math.Round(newX, 2)},y={Math.Round(newY, 2)}"
+                //});
+                Logger?.LogCollisionWithWall(this.Id, "Top", newX, newY);
 
                 newY = radius;
                 dy = -dy;
             }
             else if (newY > TableHeight - Diameter)
             {
-                Logger?.Log(new DiagnosticEvent
-                {
-                    Timestamp = DateTime.Now,
-                    EventType = "WallHit (Bottom)",
-                    BallId1 = this.Id,
-                    BallId2 = null,
-                    Position = $"x={Math.Round(newX, 2)} ,y={Math.Round(newY, 2)}"
-                });
+                //Logger?.Log(new DiagnosticEvent
+                //{
+                //    Timestamp = DateTime.Now,
+                //    EventType = "WallHit (Bottom)",
+                //    BallId1 = this.Id,
+                //    BallId2 = null,
+                //    Position = $"x={Math.Round(newX, 2)} ,y={Math.Round(newY, 2)}"
+                //});
+                Logger?.LogCollisionWithWall(this.Id, "Bottom", newX, newY);
 
                 newY = TableHeight - Diameter;
                 dy = -dy;

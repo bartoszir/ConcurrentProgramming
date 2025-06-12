@@ -162,14 +162,7 @@ namespace Billiards.Data
             {
                 if (!ReferenceEquals(current, other))
                 {
-                    _logger.Log(new DiagnosticEvent
-                    {
-                        Timestamp = DateTime.Now,
-                        EventType = "Collision",
-                        BallId1 = current.Id,
-                        BallId2 = other.Id,
-                        Position = $"x={Math.Round(current.Position.x, 2)},y={Math.Round(current.Position.y, 2)}"
-                    });
+                    //_logger.LogCollisionWithBall(current, other);
                     HandleCollision(current, other);
                 }
             }
@@ -200,6 +193,8 @@ namespace Billiards.Data
 
             if (approachSpeed >= 0)
                 return;
+
+            _logger.LogCollisionWithBall(a, b);
 
             double impulseMagnitude = (2.0 * approachSpeed) / (massA + massB);
             Vector impulse = impulseMagnitude * normal;
